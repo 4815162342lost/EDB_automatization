@@ -2,6 +2,10 @@ import requests
 import json
 import csv
 import os
+import openpyxl
+import glob
+import itertools
+
 
 #change current directory to script diresctory for find config
 os.chdir(os.path.dirname(__file__))
@@ -84,6 +88,22 @@ def get_server_with_kernel_versions_from_csv(filename):
     for row in csv_r:
         dict_servers[row[0]]=row[1]
     return dict_servers
+
+def read_xls_content():
+    file_name=glob.glob("./000/*.xlsx")
+    if len(file_name)!=1:
+        print("Please, copy Linux report to folder or make sure that we have only one report")
+        exit()
+    xls_file=openpyxl.load_workbook(filename=file_name[0], data_only=True)
+
+    for row in itertools.islice(xls_file['Unix_report'], 1, None):
+        for col in row:
+            print(col.value)
+    exit()
+
+read_xls_content()
+exit()
+
 
 settings=get_settings()
 
