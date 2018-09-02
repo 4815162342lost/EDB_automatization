@@ -1,0 +1,15 @@
+[credentials]
+login=login
+password=pass
+
+[urls]
+get_token=http://auth
+get_requests=http://get
+post_requests=http://post
+
+[sensitive data]
+data=data
+kernels=kernels
+kernel_release=kernel_release
+token=token
+kernel_version=kernel_version
