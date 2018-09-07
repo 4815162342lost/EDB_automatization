@@ -97,8 +97,7 @@ def read_xls_content():
     xls_file=openpyxl.load_workbook(filename=file_name[0], data_only=True)
 
     for row in itertools.islice(xls_file['Unix_report'], 1, None):
-        for col in row:
-            print(col.value)
+        print(row[0].value)
     exit()
 
 read_xls_content()
@@ -114,6 +113,15 @@ all_kernel_versions_in_csv=get_all_kernel_version_from_csv(my_args.filename)
 
 
 #available_kernels_in_edb=get_all_kernel_version_from_edb("CentOS", "CentOS-7", api_key)
+
+os_codenames=(
+    {'CentOS' : 'CentOS',
+    'RedHat' : 'Red Hat',
+    'OEL' : 'Oracle',
+    'Debian' : 'Debian GNU/Linux',
+    'SUSE': 'SUSE'},
+)
+
 available_kernels_in_edb=get_all_kernel_version_from_edb(my_args.vendor, my_args.product, api_key)
 all_kernel_versions_in_edb=[]
 for current_string in available_kernels_in_edb[settings['sensitive data']['data']]:
