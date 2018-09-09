@@ -8,7 +8,7 @@ import itertools
 
 
 #change current directory to script diresctory for find config
-os.chdir(os.path.dirname(__file__))
+#os.chdir(os.path.dirname(__file__))
 
 def get_settings():
     '''Function for read configs from edb_conf.txt file'''
@@ -27,6 +27,8 @@ def get_api_key(login, password):
         exit()
 
 def get_all_kernel_version_from_edb(vendor, product, token):
+    print(vendor, product)
+    return 0
     '''extract all available kernel's version from EDB for specific Linux distro and specific version'''
     headers={settings['sensitive data']['token'] : token}
     try:
@@ -89,7 +91,8 @@ def get_server_with_kernel_versions_from_csv(filename):
         dict_servers[row[0]]=row[1]
     return dict_servers
 
-def read_xls_content():
+def read_xls_content_and_set_kernel_version():
+    possible_kernels_in_xlsx_splitted_by_os = {}
     file_name=glob.glob("./000/*.xlsx")
     if len(file_name)!=1:
         print("Please, copy Linux report to folder or make sure that we have only one report")
@@ -97,22 +100,23 @@ def read_xls_content():
     xls_file=openpyxl.load_workbook(filename=file_name[0], data_only=True)
 
     for row in itertools.islice(xls_file['Unix_report'], 1, None):
-        print(row[0].value)
+        possible_kernel_version_splitted_by_os_from_edb
     exit()
 
-read_xls_content()
-exit()
+# print(os_codenames[1]['OEL'])
+# exit()
+#
+# read_xls_content()
+# exit()
 
+read_xls_content_and_set_kernel_version()
 
 settings=get_settings()
 
 my_args=parse_args()
 api_key=get_api_key(settings['credentials']['login'], settings['credentials']['password'])
 
-all_kernel_versions_in_csv=get_all_kernel_version_from_csv(my_args.filename)
 
-
-#available_kernels_in_edb=get_all_kernel_version_from_edb("CentOS", "CentOS-7", api_key)
 
 os_codenames=(
     {'CentOS' : 'CentOS',
@@ -120,7 +124,31 @@ os_codenames=(
     'OEL' : 'Oracle',
     'Debian' : 'Debian GNU/Linux',
     'SUSE': 'SUSE'},
+    {'CentOS': 'CentOS-',
+     'RedHat': 'Enterprise Linux ',
+     'OEL': 'Oracle Linux ',
+     'Debian': 'Debian ',
+     'SUSE': 'OpenSuse '},
+    {'CentOS': (5,6,7),
+     'RedHat': (5,6,7),
+     'OEL': (5,6,7),
+     'Debian': ('8.0', '9.0'),
+     'SUSE': ('42.0',)}
 )
+
+possible_kernel_version_splitted_by_os_from_edb={}
+
+for idx, os_type in enumerate(os_codenames[2]):
+    for idx2, version in enumerate(os_codenames[2][os_type]):
+        possible_kernel_version_splitted_by_os_from_edb[(f'{os_type}_{str(os_codenames[2][os_type][idx2]).replace(".","")}')]=get_all_kernel_version_from_edb(os_codenames[0][os_type], os_codenames[1][os_type]+str(os_codenames[2][os_type][idx2]), api_key)
+
+
+all_kernel_versions_in_csv=get_all_kernel_version_from_csv(my_args.filename)
+
+
+#available_kernels_in_edb=get_all_kernel_version_from_edb("CentOS", "CentOS-7", api_key)
+
+
 
 available_kernels_in_edb=get_all_kernel_version_from_edb(my_args.vendor, my_args.product, api_key)
 all_kernel_versions_in_edb=[]
